@@ -72,7 +72,7 @@ void messageHandler::sendIntParameter(int param) {
 
 }
 
-void sendStringParameter(string param) {
+void messageHandler::sendStringParameter(string param) {
     
 }
 
@@ -92,6 +92,6 @@ int messageHandler::recvIntParameter() {
     return 0;
 }
 
-string recvStringParameter() {
+string messageHandler::recvStringParameter() {
     return "";
 }
