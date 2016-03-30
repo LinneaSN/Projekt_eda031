@@ -23,5 +23,15 @@ class messageHandler{
 		void clientDeleteArt(int newsgroup, int article);
 		void clientGetArt(int newsgroup, int article);
 	private:
+        void sendByte(unsigned char code);
+        void sendCode(unsigned char code);
+        void sendInt(int value);
+        void sendIntParameter(int param);
+        void sendStringParameter(std::string param);
+        unsigned char recvByte();
+        unsigned char recvCode();
+        int recvInt();
+        int recvIntParameter();
+        std::string recvStringParameter();
 };
 #endif
