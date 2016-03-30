@@ -20,8 +20,8 @@ class messageHandler{
 		std::string clientDeleteNG(int newsgroup);
 		std::string clientListArt(int newsgroup);
 		std::string clientCreateArt(int newsgroup, std::string &title, std::string &author, std::string &text);
-		std::string clientDeleteArt(int newsgroup, int article);
-		std::string clientGetArt(int newsgroup, int article);
+		void clientDeleteArt(int newsgroup, int article);
+		void clientGetArt(int newsgroup, int article);
 	private:
 };
 #endif
