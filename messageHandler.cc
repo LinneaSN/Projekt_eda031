@@ -57,41 +57,72 @@ string mesageHandler::clientGetArt(int newsgroup, int article) {
 
 // Low level protocol functions 
 void messageHandler::sendByte(unsigned char code) {
-
+    conn.write(code);
 }
 
 void messageHandler::sendCode(unsigned char code) {
-
+    sendByte(code);
 }
 
 void messageHandler::sendInt(int value) {
-
+    sendByte((value >> 24) & 0xFF);
+    sendByte((value >> 16) & 0xFF);
+    sendByte((value >> 8) & 0xFF);
+    sendByte(value & 0xFF);
 }
 
 void messageHandler::sendIntParameter(int param) {
-
+    sendCode(Protocol::PAR_NUM);
+    sendInt(param);
 }
 
 void messageHandler::sendStringParameter(string param) {
-    
+    sendCode(Protocol::PAR_STRING);
+    sendInt(param.length());
+    for (const unsigned char c : param) {
+        sendByte(c);
+    } 
 }
 
 unsigned char messageHandler::recvByte() {
-    return 0;
+    unsigned char code = conn.read();
+    return code;
 }
 
 unsigned char messageHandler::recvCode() {
-    return 0;
+    unsigned char code = recvByte();
+    return code;
 }
 
 int messageHandler::recvInt() {
-    return 0;
+    int b1 = recvByte();
+    int b2 = recvByte();
+    int b3 = recvByte();
+    int b4 = recvByte();
+    return b1 << 24 | b2 << 16 | b3 << 8 | b4;
 }
 
 int messageHandler::recvIntParameter() {
-    return 0;
+    unsigned char code = recvCode();
+    if (code != Protocol::PAR_NUM) {
+        // throw protocol violation error
+    }
+    return recvInt();
 }
 
 string messageHandler::recvStringParameter() {
-    return "";
+    unsigned char code = recvCode();
+    if (code != Protocol::PAR_STRING) {
+        // throw protocol violation error
+    }
+    int n = recvInt();
+    if (n < 0) {
+        // throw protocol violation error
+    }
+    string result;
+    for (int i = 0; i < n; ++i) {
+        unsigned char c = conn.read();
+        result += c;
+    }
+    return result;
 }
