@@ -55,3 +55,43 @@ string mesageHandler::clientGetArt(int newsgroup, int article) {
 	return s.append(to_string(COM_GET_ART) + ' ' + to_string(newsgroup) + ' ' + to_string(article) + ' ' + to_string(COM_END));
 }
 
+// Low level protocol functions 
+void messageHandler::sendByte(unsigned char code) {
+
+}
+
+void messageHandler::sendCode(unsigned char code) {
+
+}
+
+void messageHandler::sendInt(int value) {
+
+}
+
+void messageHandler::sendIntParameter(int param) {
+
+}
+
+void sendStringParameter(string param) {
+    
+}
+
+unsigned char messageHandler::recvByte() {
+    return 0;
+}
+
+unsigned char messageHandler::recvCode() {
+    return 0;
+}
+
+int messageHandler::recvInt() {
+    return 0;
+}
+
+int messageHandler::recvIntParameter() {
+    return 0;
+}
+
+string recvStringParameter() {
+    return "";
+}
