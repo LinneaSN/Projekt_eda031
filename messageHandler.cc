@@ -5,22 +5,61 @@
 
 using namnspace std;
 
-messageHandler::messageHandler(connection c) : conn(c) {}
+messageHandler::messageHandler(Connection c) : conn(c) {}
 
 //Server
-void messageHandler::serverListNG(vector<string> NG){
+void messageHandler::serverListNG(vector<string> &NG){
 	//string s;
 	unsigned int nbr = NG.size();
 	//s.append(to_string(ANS_LIST_NG) + ' ' + to_string(nbr) + ' ');
 	sendByte(ANS_LIST_NG);
-	sendInt(nbr);
+	sendInt(nbr); //nbr unsigned int, ok?
 	for(unsigned int i = 0; i<nbr; ++i){
 	//	s.append(to_string(i) + ' ' NG[i] + ' ');
-		sendIntParameter(i);
+		sendIntParameter(i); //i unsigned int, ok?
 		sendStringParameter(NG[i]);
 	}
 	//s.append(
 	sendByte(ANS_END);
+}
+
+void messageHandler::serverCreateNG(bool answer) {
+    sendCode(ANS_CREATE_NG);
+    if(answer){
+        sendCode(ANS_ACK);
+    } else {
+        sendCode(ANS_NAK);
+        sendCode(ERR_NG_ALREADY_EXISTS);
+    }
+    sendCode(ANS_END);
+}
+
+void messageHandler::serverDeleteNG(bool answer) {
+    sendCode(ANS_Delete_NG);
+    if(answer){
+        sendCode(ANS_ACK);
+    } else {
+        sendCode(ANS_NAK);
+        sendCode(ERR_NG_DOES_NOT_EXIST);
+    }
+    sendCode(ANS_END);
+}
+
+void messageHandler::serverListArt(vector<string> &articles) {
+    sendCode(ANS_LIST_ART);
+    unsigned int nbr = articles.size();
+    if(nbr>0){
+        sendCode(ANS_ACK);
+        sendIntParameter(nbr); //nbr is unsigned int, ok?
+        for(unsigned int i =0;i<nbr;++i){ //i unsigned int, ok?
+            sendIntParameter(i);
+            sendStringParameter(articles[i]);
+        }
+    } else {
+        sendCode(ANS_NAK);
+        sendCode(ERR_NG_DOES_NOT_EXIST);
+    }
+    sendCode(ANS_END);
 }
 
 //check difference between byte and code !!!!!!!!!!!!!!!!!!!!!
