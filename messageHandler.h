@@ -2,15 +2,15 @@
 #define MESSAGEHANDLER_H
 class messageHandler{
 	public:
-		messageHandler(connection c);
+		messageHandler(Connection c);
 
 		int serverRead(string s,vector<std::string> &cmds);
 		//std::string serverWrite(int stuff,);
 		//En metod för varje commando
-		void serverListNG(std::vector<std::string> NG);
+		void serverListNG(std::vector<std::string> &NG);
 		void serverCreateNG(bool answer);
 		void serverDeleteNG(bool answer);
-		void serverListArt(std::vector<std::string> articles);
+		void serverListArt(std::vector<std::string> &articles);
 		void serverCreateArt(bool answer);
 		void serverDeleteArt(int answer);
 		void serverGetArt(std::string &title, std::string &author, std::string &text);
@@ -25,7 +25,7 @@ class messageHandler{
 		void clientDeleteArt(int newsgroup, int article);
 		void clientGetArt(int newsgroup, int article);
 	private:
-		connection conn;
+		Connection conn;
 
         	void sendByte(unsigned char code);
         	void sendCode(unsigned char code);
