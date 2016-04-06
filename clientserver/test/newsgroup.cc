@@ -39,7 +39,7 @@ Article Newsgroup::getArticle(int i){
       return *it;
     }
   }
-  throw "ERR_ART_DOES_NOT_EXIST";
+  throw ERR_ART_DOES_NOT_EXIST();
 }
 
 void Newsgroup::addArticle(Article art){
@@ -53,7 +53,7 @@ void Newsgroup::deleteArticle(int i){
 	return;
       }
     }
-    throw "ERR_ART_DOES_NOT_EXIST";
+    throw ERR_ART_DOES_NOT_EXIST();
 }
 
 
@@ -62,13 +62,11 @@ vector<Article>& Newsgroup::listArticles(){
   return articles;
 }
 
-/* bool operator==(const Newsgroup& lhs, const Newsgroup& rhs){
-  if(lhs.getNbr() == rhs.getNbr()){
-      return true;
-    }
-
-    return false;
-
-    }*/
-
+struct ERR_ART_DOES_NOT_EXIST : public exception
+{
+  const char *what() const throw ()
+  {
+    return "Article does not exsist";
+  }
+};
 
