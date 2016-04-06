@@ -41,8 +41,7 @@ Article Newsgroup::getArticle(int i){
       return *it;
     }
   }
-  cout<<"ej hittad"<< endl;
-  throw "no_such_article_found_error";
+  throw "ERR_ART_DOES_NOT_EXIST";
 }
 
 void Newsgroup::addArticle(Article art){
