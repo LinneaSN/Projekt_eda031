@@ -131,7 +131,7 @@ void messageHandler::serverDeleteArt(vector<Newsgroup> &NG){
         try {
             it->deleteArticle(articleID);
             sendCode(Protocol::ANS_ACK);
-        } catch (string s) {
+        } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
             sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
         }
@@ -158,8 +158,7 @@ void messageHandler::serverGetArt(vector<Newsgroup> &NG){
             sendStringParameter(article.getTitle());
             sendStringParameter(article.getAuthor());
             sendStringParameter(article.getText());
-        } catch (string s) {
-            cout << s << endl;
+        } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
             sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
         }

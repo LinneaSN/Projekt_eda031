@@ -3,6 +3,7 @@
 #include <ctime>
 #include "article.h"
 #include "newsgroup.h"
+#include "ERR_ART_DOES_NOT_EXIST.h"
 
 using namespace std;
 
@@ -62,11 +63,4 @@ vector<Article>& Newsgroup::listArticles(){
   return articles;
 }
 
-struct ERR_ART_DOES_NOT_EXIST : public exception
-{
-  const char *what() const throw ()
-  {
-    return "Article does not exsist";
-  }
-};
 

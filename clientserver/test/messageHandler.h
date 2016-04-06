@@ -5,6 +5,7 @@
 #include "connection.h"
 #include "newsgroup.h"
 #include "article.h"
+#include "ERR_ART_DOES_NOT_EXIST.h"
 
 class messageHandler{
 	public:
