@@ -2,10 +2,11 @@
 #define MESSAGEHANDLER_H
 #include <string>
 #include <vector>
-//#include "connection.h"
+#include "./clientserver/connection.h"
+
 class messageHandler{
 	public:
-		//messageHandler(Connection c);
+		messageHandler(Connection& c);
 
 		//int serverRead(string s,vector<std::string> &cmds);
 		//std::string serverWrite(int stuff,);
@@ -27,8 +28,16 @@ class messageHandler{
 		void clientCreateArt(int newsgroup, std::string &title, std::string &author, std::string &text);
 		void clientDeleteArt(int newsgroup, int article);
 		void clientGetArt(int newsgroup, int article);
+
+        std::vector<std::string> clientReadListNG();
+        void clientReadCreateNG();
+        void clientReadDeleteNG();
+        void clientReadListArt();
+        void clientReadCreateArt();
+        void clientReadDeleteArt();
+        void clientReadGetArt();
 	private:
-		//Connection conn;
+		Connection& conn;
 
         	void sendByte(unsigned char code);
         	void sendCode(unsigned char code);
@@ -42,3 +51,6 @@ class messageHandler{
         	std::string recvStringParameter();
 };
 #endif
+
+
+
