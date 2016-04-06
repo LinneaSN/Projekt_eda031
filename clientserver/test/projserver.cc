@@ -3,35 +3,19 @@
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "messageHandler.h"
+#include "protocol.h"
+#include "newsgroup.h"
+#include "article.h"
 
 #include <memory>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 
-/*
- * Read an integer from a client.
- */
-int readNumber(const shared_ptr<Connection>& conn) {
-	unsigned char byte1 = conn->read();
-	unsigned char byte2 = conn->read();
-	unsigned char byte3 = conn->read();
-	unsigned char byte4 = conn->read();
-	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
-}
-
-/*
- * Send a string to a client.
- */
-void writeString(const shared_ptr<Connection>& conn, const string& s) {
-	for (char c : s) {
-		conn->write(c);
-	}
-	conn->write('$');
-}
 
 int main(int argc, char* argv[]){
 	if (argc != 2) {
@@ -52,22 +36,40 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
+
+    vector<Newsgroup> newsgroups;
 	
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
 			try {
-				//int nbr = readNumber(conn);
-				//string result;
-				//if (nbr > 0) {
-				//	result = "positive";
-				//} else if (nbr == 0) {
-				//	result = "zero";
-				//} else {
-				//	result = "negative";
-				//}
-				//writeString(conn, result);
-                
+                messageHandler m(*conn);
+                // Read message type
+                unsigned char type = conn->read(); 
+                switch (type) {
+                    case Protocol::COM_LIST_NG:
+                        m.serverListNG(newsgroups);
+                        break;
+                    case Protocol::COM_CREATE_NG:
+                        m.serverCreateNG(newsgroups);
+                        break;
+                    case Protocol::COM_DELETE_NG:
+                        m.serverDeleteNG(newsgroups);
+                        break;
+                    case Protocol::COM_LIST_ART:
+                        m.serverListArt(newsgroups);
+                        break;
+                    case Protocol::COM_CREATE_ART:
+                        break;
+                    case Protocol::COM_DELETE_ART:
+                        break;
+                    case Protocol::COM_GET_ART:
+                        break;
+                    default:
+                        // throw exception
+                        cerr << "If you see this, something is wrong!" << endl;
+                        break;
+                }
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;

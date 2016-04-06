@@ -21,7 +21,7 @@ Newsgroup::Newsgroup(string str){
       }
 }*/
 
-int Newsgroup::count=1;
+int Newsgroup::count=0;
 
 string Newsgroup::getName(){
   return name;

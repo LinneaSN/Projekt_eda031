@@ -10,7 +10,7 @@ Article::Article(string tit, string aut,string text){
   author = aut;
   articleText = text;
 }
-int Article::count=1;
+int Article::count=0;
 
 string Article::getAuthor(){
   return author;

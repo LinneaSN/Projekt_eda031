@@ -4,26 +4,41 @@
 #include <vector>
 #include "connection.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
 messageHandler::messageHandler(Connection& c) : conn(c) {}
 
 //Server
-void messageHandler::serverListNG(vector<string> &NG){
+void messageHandler::serverListNG(vector<Newsgroup> &NG){
+    recvCode(); // read COM_END
+
 	unsigned int nbr = NG.size();
 	sendCode(Protocol::ANS_LIST_NG);
 	sendIntParameter(nbr); //nbr unsigned int, ok?
 	for(unsigned int i = 0; i<nbr; ++i){
 		sendIntParameter(i); //i unsigned int, ok?
-		sendStringParameter(NG[i]);
+		sendStringParameter(NG[i].getName());
 	}
 	sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverCreateNG(bool answer) {
+void messageHandler::serverCreateNG(vector<Newsgroup> &NG) {
+    bool exists = false;
+    string name = recvStringParameter(); // read string
+    recvCode(); // read COM_END
+
+    Newsgroup n(name);
+    if (find_if(NG.begin(), NG.end(), 
+                [name](Newsgroup& n){ return n.getName() == name;} ) != NG.end()) {
+        exists = true;
+    } else {
+        NG.push_back(n);
+    }
+
     sendCode(Protocol::ANS_CREATE_NG);
-    if(answer){
+    if(!exists){
         sendCode(Protocol::ANS_ACK);
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -32,9 +47,20 @@ void messageHandler::serverCreateNG(bool answer) {
     sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverDeleteNG(bool answer) {
+void messageHandler::serverDeleteNG(vector<Newsgroup> &NG) {
+    bool removed = false;
+    int id = recvIntParameter(); // read int
+    recvCode(); // read COM_END
+
+    auto it = remove_if(NG.begin(), NG.end(), 
+            [id](Newsgroup& n){ return n.getNbr() == id;});
+    if (it != NG.end()) {
+        NG.erase(it);
+        removed = true;
+    }
+    
     sendCode(Protocol::ANS_DELETE_NG);
-    if(answer){
+    if(removed){
         sendCode(Protocol::ANS_ACK);
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -43,15 +69,21 @@ void messageHandler::serverDeleteNG(bool answer) {
     sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverListArt(vector<string> &articles) {
+void messageHandler::serverListArt(vector<Newsgroup> &NG) {
+    int id = recvIntParameter(); // read int
+    recvCode(); // read COM_END
+
+    auto it = find_if(NG.begin(), NG.end(), [id](Newsgroup& n){ return n.getNbr() == id; }); 
+    
     sendCode(Protocol::ANS_LIST_ART);
-    unsigned int nbr = articles.size();
-    if(nbr>0){
+    if (it != NG.end()) {
+        vector<Article>& articles = it->listArticles();
+        
         sendCode(Protocol::ANS_ACK);
-        sendIntParameter(nbr); //nbr is unsigned int, ok?
-        for(unsigned int i =0;i<nbr;++i){ //i unsigned int, ok?
-            sendIntParameter(i);
-            sendStringParameter(articles[i]);
+        sendIntParameter(articles.size());
+        for (auto &a : articles) {
+            sendIntParameter(a.getNbr());
+            sendStringParameter(a.getTitle());
         }
     } else {
         sendCode(Protocol::ANS_NAK);
