@@ -38,7 +38,7 @@ string Newsgroup::getDateAndTimeCreated(){
 Article Newsgroup::getArticle(int i){
   for(vector<Article>::iterator it = articles.begin(); it != articles.end();++it){
     if(it->getNbr() == i){
-      return articles[i];
+      return *it;
     }
   }
   cout<<"ej hittad"<< endl;
