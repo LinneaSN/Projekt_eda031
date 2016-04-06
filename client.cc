@@ -9,7 +9,7 @@
 using namespace std;
 
 //vector<int> NGdata(3,0); //List for newsgroup, article and 
-//map<string,int> currentNewsGroup;//Stores names of newgroups and their numbers/indices
+//map<string,int> currentNewsGroup;//Stores names of newsgroups and their numbers/indices
 //string NG;
 //Connection c;
 //messageHandler handler(c);
@@ -27,22 +27,31 @@ void client::parseCmd(string &input){
 	int numbargs;
 	while(s>>parse){
 		if(parse=="list"){
-				if(input.length()<5){
+			if(input.length()<5){
 				cout<<"Listing NewsGroups.."<<endl;
-//				handler.clientListNG();
-//				handler.clientReadListNG();
-//				currentNewsGroup=clientRead();
+				handler.clientListNG();
+				vector<string> NGs=handler.clientReadListNG();
+					for(auto itr=NGs.begin();itr!=NGs.end();++itr){
+						currentNewsGroup[*itr]=static_cast<int>(distance(NGs.begin(),itr));
+					}
 			} else {
+				bool ok=1;
 				s>>NG; //get string for article
 				cout<<"Listing articles for NewsGroup :"<<NG<<endl;
-//				clientListArt(currentNewsGroup[NG]);
+				handler.clientListArt(client::currentNewsGroup[NG]);
+				vector<string> articles=clientReadListArt(ok);
+				if(ok){
+					for(auto itr=articles.begin(); itr!=articles.end();++itr){
+						cout<<static_cast<int>(distance(articles.begin(),itr))<<" "<<*itr<<endl;
+					}
+				}
 			}
 		}else if(parse=="read"){
 			if(!NG.empty()){
 				s>>parse;
 				cout<<"Reading article: "<<parse<<"in newsgroup:"<<NG<<endl;
 				int article=static_cast<int>(parse[0]);
-	//			clientGetArt(currentNewsGroup[NG],article);
+				handler.clientGetArt(currentNewsGroup[NG],article);
 			}else{
 				client::printErrorMessage();
 			}
