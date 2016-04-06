@@ -15,9 +15,9 @@ Newsgroup::Newsgroup(string str){
   created=time(NULL);
 }
 
-Newsgroup::~Newsgroup(){
+/*Newsgroup::~Newsgroup(){
  --count;
-}
+}*/
 
 int Newsgroup::count=0;
 
