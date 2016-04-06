@@ -13,7 +13,7 @@ class Newsgroup{
   std::string getName();
   int getNbr();
   std::string getDateAndTimeCreated();
-  void listArticles();
+  std::vector<Article>&  listArticles();
   void addArticle(Article art);
   void deletArticle(int q);
 
