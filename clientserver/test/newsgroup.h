@@ -8,14 +8,18 @@
 
 class Newsgroup{
  public:
-  Newsgroup( std::string str);
-
+  Newsgroup(std::string str);
+  // ~Newsgroup();
   std::string getName();
   int getNbr();
   std::string getDateAndTimeCreated();
   std::vector<Article>&  listArticles();
+  Article getArticle(int i);
   void addArticle(Article art);
   void deletArticle(int q);
+
+  //friend bool operator==(const Newsgroup&, const Newsgroup&);
+
 
  private:
   static int count;
