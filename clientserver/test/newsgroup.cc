@@ -16,9 +16,7 @@ Newsgroup::Newsgroup(string str){
 }
 
 /*Newsgroup::~Newsgroup(){
-      for (vector<Article>::iterator it = articles.begin() ; it != articles.end(); ++it){
-	articles.erase(it);
-      }
+ --count;
 }*/
 
 int Newsgroup::count=0;
