@@ -1,3 +1,9 @@
+#ignore all
+*
+
+#but not extensions
+!*.*
+
 # Compiled Object files
 *.slo
 *.lo
