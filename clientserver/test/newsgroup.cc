@@ -55,6 +55,7 @@ void Newsgroup::deletArticle(int i){
 	break;
       }
     }
+    throw "ERR_ART_DOES_NOT_EXIST";
 }
 
 
