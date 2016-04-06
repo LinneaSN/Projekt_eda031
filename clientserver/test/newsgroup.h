@@ -16,7 +16,7 @@ class Newsgroup{
   std::vector<Article>&  listArticles();
   Article getArticle(int i);
   void addArticle(Article art);
-  void deletArticle(int q);
+  void deleteArticle(int q);
 
   //friend bool operator==(const Newsgroup&, const Newsgroup&);
 
