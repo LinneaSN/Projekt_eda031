@@ -1,0 +1,6 @@
+#ifndef ERR_ART_DOES_NOT_EXIST_H
+#define ERR_ART_DOES_NOT_EXIST_H
+
+struct ERR_ART_DOES_NOT_EXIST{};
+
+#endif
