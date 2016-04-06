@@ -9,7 +9,7 @@
 class Newsgroup{
  public:
   Newsgroup(std::string str);
-  // ~Newsgroup();
+  ~Newsgroup();
   std::string getName();
   int getNbr();
   std::string getDateAndTimeCreated();
