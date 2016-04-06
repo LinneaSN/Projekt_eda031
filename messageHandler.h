@@ -7,7 +7,7 @@
 class messageHandler{
 	public:
 		messageHandler(Connection& c);
-        messageHandler()=default;
+        //messageHandler();
 
 		//int serverRead(string s,vector<std::string> &cmds);
 		//std::string serverWrite(int stuff,);

@@ -1,22 +1,27 @@
+#include "./clientserver/connection.h"
+#include "client.h"
+#include "messageHandler.h"
 #include <iostream>
 #include <sstream>
 #include <map>
 #include <set>
-//#include "connection.h"
-
 
 using namespace std;
 
 //vector<int> NGdata(3,0); //List for newsgroup, article and 
-const set<string> correctCmds({"list","read","create","delete","exit"});
-map<string,int> currentNewsGroup;//Stores names of newgroups and their numbers/indices
-string NG;
+//map<string,int> currentNewsGroup;//Stores names of newgroups and their numbers/indices
+//string NG;
+//Connection c;
+//messageHandler handler(c);
 
-void printErrorMessage(){
+
+client::client(Connection& c): conn(c), handler(c){}
+
+void client::printErrorMessage(){
 	cout<<"errornous command: no newsgroup selected! select a newgroup with 'list' command!"<<endl;
 }
 
-void parseCmd(string &input){
+void client::parseCmd(string &input){
 	istringstream s(input);
 	string parse;
 	int numbargs;
@@ -24,7 +29,8 @@ void parseCmd(string &input){
 		if(parse=="list"){
 				if(input.length()<5){
 				cout<<"Listing NewsGroups.."<<endl;
-//				clientListNG();
+//				handler.clientListNG();
+//				handler.clientReadListNG();
 //				currentNewsGroup=clientRead();
 			} else {
 				s>>NG; //get string for article
@@ -38,7 +44,7 @@ void parseCmd(string &input){
 				int article=static_cast<int>(parse[0]);
 	//			clientGetArt(currentNewsGroup[NG],article);
 			}else{
-				printErrorMessage();
+				client::printErrorMessage();
 			}
 		}else if(parse=="create"){
 			s>>parse;
@@ -56,7 +62,7 @@ void parseCmd(string &input){
 	//				clientCreateArt(currentNewsGroup[NG],title,author,text);
 					cout<<"Creating Article: Title: "<<title<<" author: "<<author<<" text: "<<text<<endl;	
 				} else {
-					printErrorMessage();
+					client::printErrorMessage();
 				}
 			}
 		}else if(parse=="delete" ){
@@ -72,7 +78,7 @@ void parseCmd(string &input){
 					//clientDeleteArt(currentNewsGroup[NG],article);
 					cout<<"Deleting Article: "<<article<<" in newsgroup: "<<NG<<endl;
 				} else {
-					printErrorMessage();	
+					client::printErrorMessage();	
 				}
 			}
 		}
@@ -85,9 +91,14 @@ int main(){
 	//messageHandler MH=new messageHandler(Connection)
 	//Read and parse data
 	//istream i;
+	const set<string> correctCmds({"list","read","create","delete","exit"});
 	string input;
 	string sendstr;
 	istringstream i;
+	const char* b="127.0.0.1";
+	Connection c(b,2);
+	client myClient(c);
+	cout<<"--NewsClient started--\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n read articleNbr :Read selected article"<<endl;
 	while(input!="exit"){
 		getline(cin,input);
 		istringstream i(input);
@@ -95,7 +106,7 @@ int main(){
 		i>>test;
 	//	cout<<input<<endl;
 		if(correctCmds.find(test)!=correctCmds.end()){
-			parseCmd(input);	
+			myClient.parseCmd(input);	
 		} else {
 			cout<<"Errornous input: "<<input<<endl;
 		}		

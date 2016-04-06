@@ -8,7 +8,7 @@
 using namespace std;
 
 messageHandler::messageHandler(Connection& c) : conn(c) {}
-
+//messageHandler::messageHandler(){}
 //Server
 void messageHandler::serverListNG(vector<string> &NG){
 	unsigned int nbr = NG.size();
@@ -388,6 +388,6 @@ string messageHandler::recvStringParameter() {
 }
 
 
-int main(){
-    cout<<"test"<<endl;
-}
+//int main(){
+//    cout<<"test"<<endl;
+//}
