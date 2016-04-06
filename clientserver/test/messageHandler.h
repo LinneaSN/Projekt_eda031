@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include "connection.h"
+#include "newsgroup.h"
+#include "article.h"
 
 class messageHandler{
 	public:
@@ -11,10 +13,10 @@ class messageHandler{
 		//int serverRead(string s,vector<std::string> &cmds);
 		//std::string serverWrite(int stuff,);
 		//En metod för varje commando
-		void serverListNG(std::vector<std::string> &NG);
-		void serverCreateNG(bool answer);
-		void serverDeleteNG(bool answer);
-		void serverListArt(std::vector<std::string> &articles);
+		void serverListNG(std::vector<Newsgroup> &NG);
+		void serverCreateNG(std::vector<Newsgroup> &NG);
+		void serverDeleteNG(std::vector<Newsgroup> &NG);
+		void serverListArt(std::vector<Newsgroup> &NG);
 		void serverCreateArt(bool answer);
 		void serverDeleteArt(int answer);// answer<0 : wrong ng nbr, answer==0 : wrong article nbr, answer>0 ok!
 		void serverGetArt(int status, std::string &title, std::string &author, std::string &text);
