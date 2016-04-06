@@ -17,9 +17,9 @@ class messageHandler{
 		void serverCreateNG(std::vector<Newsgroup> &NG);
 		void serverDeleteNG(std::vector<Newsgroup> &NG);
 		void serverListArt(std::vector<Newsgroup> &NG);
-		void serverCreateArt(bool answer);
-		void serverDeleteArt(int answer);// answer<0 : wrong ng nbr, answer==0 : wrong article nbr, answer>0 ok!
-		void serverGetArt(int status, std::string &title, std::string &author, std::string &text);
+		void serverCreateArt(std::vector<Newsgroup> &NG);
+		void serverDeleteArt(std::vector<Newsgroup> &NG);// answer<0 : wrong ng nbr, answer==0 : wrong article nbr, answer>0 ok!
+		void serverGetArt(std::vector<Newsgroup> &NG);
 
 	//For client:
 		//void clientRead(string answer);

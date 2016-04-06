@@ -17,10 +17,16 @@ void messageHandler::serverListNG(vector<Newsgroup> &NG){
 	unsigned int nbr = NG.size();
 	sendCode(Protocol::ANS_LIST_NG);
 	sendIntParameter(nbr); //nbr unsigned int, ok?
-	for(unsigned int i = 0; i<nbr; ++i){
+	
+    for (auto n : NG) {
+        sendIntParameter(n.getNbr());
+        sendStringParameter(n.getName());
+    }
+    
+    /*for(unsigned int i = 0; i<nbr; ++i){
 		sendIntParameter(i); //i unsigned int, ok?
 		sendStringParameter(NG[i].getName());
-	}
+	}*/
 	sendCode(Protocol::ANS_END);
 }
 
@@ -92,9 +98,18 @@ void messageHandler::serverListArt(vector<Newsgroup> &NG) {
     sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverCreateArt(bool answer) {
+void messageHandler::serverCreateArt(vector<Newsgroup> &NG) {
+    int id = recvIntParameter();
+    string title = recvStringParameter();
+    string author = recvStringParameter();
+    string text = recvStringParameter();
+    recvCode(); // COM_END
+    
+    auto it = find_if(NG.begin(), NG.end(), [id](Newsgroup& n){ return n.getNbr() == id; }); 
+
     sendCode(Protocol::ANS_CREATE_ART);
-    if(answer){
+    if(it != NG.end()){
+        it->addArticle(Article(title, author, text));
         sendCode(Protocol::ANS_ACK);
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -103,33 +118,55 @@ void messageHandler::serverCreateArt(bool answer) {
     sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverDeleteArt(int answer){
+void messageHandler::serverDeleteArt(vector<Newsgroup> &NG){
+    int newsID = recvIntParameter();
+    int articleID = recvIntParameter();
+    recvCode(); // COM_END
+
+    auto it = find_if(NG.begin(), NG.end(), 
+            [newsID](Newsgroup& n){ return n.getNbr() == newsID; });
+
     sendCode(Protocol::ANS_DELETE_ART);
-    if(answer>0){
-        sendCode(Protocol::ANS_ACK);
-    } else if(answer<0){
-        sendCode(Protocol::ANS_NAK);
-        sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+    if (it != NG.end()) {
+        try {
+            it->deleteArticle(articleID);
+            sendCode(Protocol::ANS_ACK);
+        } catch (string s) {
+            sendCode(Protocol::ANS_NAK);
+            sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
+        }
     } else {
         sendCode(Protocol::ANS_NAK);
-        sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
+        sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
     }
     sendCode(Protocol::ANS_END);
 }
 
-void messageHandler::serverGetArt(int status, string &title, string &author, string &text){
+void messageHandler::serverGetArt(vector<Newsgroup> &NG){
+    int newsID = recvIntParameter();
+    int articleID = recvIntParameter();
+    recvCode(); // COM_END
+
+    auto it = find_if(NG.begin(), NG.end(), 
+            [newsID](Newsgroup& n){ return n.getNbr() == newsID; });
+    
     sendCode(Protocol::ANS_GET_ART);
-    if(status>0){
-        sendCode(Protocol::ANS_ACK);
-        sendStringParameter(title);
-        sendStringParameter(author);
-        sendStringParameter(text);
-    } else if(status<0){
-        sendCode(Protocol::ANS_NAK);
-        sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+    if (it != NG.end()) {
+        try {
+            Article article = it->getArticle(articleID);
+            sendCode(Protocol::ANS_ACK);
+            sendStringParameter(article.getTitle());
+            sendStringParameter(article.getAuthor());
+            sendStringParameter(article.getText());
+        } catch (string s) {
+            cout << s << endl;
+            sendCode(Protocol::ANS_NAK);
+            sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+        }
+
     } else {
         sendCode(Protocol::ANS_NAK);
-        sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
+        sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
     }
     sendCode(Protocol::ANS_END);
 }
