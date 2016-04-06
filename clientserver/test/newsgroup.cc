@@ -35,6 +35,16 @@ string Newsgroup::getDateAndTimeCreated(){
   return ctime(&created);
 }
 
+Article Newsgroup::getArticle(int i){
+  for(vector<Article>::iterator it = articles.begin(); it != articles.end();++it){
+    if(it->getNbr() == i){
+      return articles[i];
+    }
+  }
+  cout<<"ej hittad"<< endl;
+  throw "no_such_article_found_error";
+}
+
 void Newsgroup::addArticle(Article art){
   articles.push_back(art);
 }
