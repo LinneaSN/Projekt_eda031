@@ -52,7 +52,7 @@ void Newsgroup::deleteArticle(int i){
     for (vector<Article>::iterator it = articles.begin() ; it != articles.end(); ++it){
       if(it->getNbr() == i){
 	articles.erase(it);
-	break;
+	return;
       }
     }
     throw "ERR_ART_DOES_NOT_EXIST";
