@@ -5,7 +5,6 @@
 #include <iostream>
 #include <map>
 #include <set>
-//class messageHandler;
 
 class client{
 	public: 

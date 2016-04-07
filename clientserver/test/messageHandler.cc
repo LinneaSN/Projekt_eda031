@@ -89,7 +89,7 @@ void messageHandler::serverListArt(vector<Newsgroup> &NG) {
         sendIntParameter(articles.size());
         for (auto &a : articles) {
             sendIntParameter(a.getNbr());
-            sendStringParameter(a.getTitle());
+            sendStringParameter(a.getTitle()+" From: " + a.getAuthor());
         }
     } else {
         sendCode(Protocol::ANS_NAK);

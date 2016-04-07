@@ -89,7 +89,11 @@ void messageHandler::serverListArt(vector<Newsgroup> &NG) {
         sendIntParameter(articles.size());
         for (auto &a : articles) {
             sendIntParameter(a.getNbr());
-            sendStringParameter(a.getTitle());
+	    string reply = a.getAuthor();//a.getTitle();
+	    reply.append("From:");
+	    reply.append(a.getAuthor());
+            sendStringParameter(reply);
+            //sendStringParameter(a.getAuthor());
         }
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -300,7 +304,7 @@ vector<string> messageHandler::clientReadListArt(bool &ok){
     } else {
         ok = true;
         int nbr = recvIntParameter();
-        string name;
+        string name;//, author;
         int id;
         for(int i = 0;i<nbr;++i){
             id = recvIntParameter();
