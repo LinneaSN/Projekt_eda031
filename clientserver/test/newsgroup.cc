@@ -3,6 +3,7 @@
 #include <ctime>
 #include "article.h"
 #include "newsgroup.h"
+#include "ERR_ART_DOES_NOT_EXIST.h"
 
 using namespace std;
 
@@ -16,9 +17,7 @@ Newsgroup::Newsgroup(string str){
 }
 
 /*Newsgroup::~Newsgroup(){
-      for (vector<Article>::iterator it = articles.begin() ; it != articles.end(); ++it){
-	articles.erase(it);
-      }
+ --count;
 }*/
 
 int Newsgroup::count=0;
@@ -41,21 +40,21 @@ Article Newsgroup::getArticle(int i){
       return *it;
     }
   }
-  throw "ERR_ART_DOES_NOT_EXIST";
+  throw ERR_ART_DOES_NOT_EXIST();
 }
 
 void Newsgroup::addArticle(Article art){
   articles.push_back(art);
 }
 
-void Newsgroup::deletArticle(int i){
+void Newsgroup::deleteArticle(int i){
     for (vector<Article>::iterator it = articles.begin() ; it != articles.end(); ++it){
       if(it->getNbr() == i){
 	articles.erase(it);
-	break;
+	return;
       }
     }
-    throw "ERR_ART_DOES_NOT_EXIST";
+    throw ERR_ART_DOES_NOT_EXIST();
 }
 
 
@@ -63,14 +62,5 @@ void Newsgroup::deletArticle(int i){
 vector<Article>& Newsgroup::listArticles(){
   return articles;
 }
-
-/* bool operator==(const Newsgroup& lhs, const Newsgroup& rhs){
-  if(lhs.getNbr() == rhs.getNbr()){
-      return true;
-    }
-
-    return false;
-
-    }*/
 
 

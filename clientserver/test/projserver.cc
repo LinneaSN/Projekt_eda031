@@ -60,10 +60,13 @@ int main(int argc, char* argv[]){
                         m.serverListArt(newsgroups);
                         break;
                     case Protocol::COM_CREATE_ART:
+                        m.serverCreateArt(newsgroups);
                         break;
                     case Protocol::COM_DELETE_ART:
+                        m.serverDeleteArt(newsgroups);
                         break;
                     case Protocol::COM_GET_ART:
+                        m.serverGetArt(newsgroups);
                         break;
                     default:
                         // throw exception
