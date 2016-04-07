@@ -39,7 +39,7 @@ void client::parseCmd(string &input){
 				s>>NG; //get string for article
 				cout<<"Listing articles for NewsGroup :"<<NG<<endl;
 				handler.clientListArt(client::currentNewsGroup[NG]);
-				vector<string> articles=clientReadListArt(ok);
+				vector<string> articles=handler.clientReadListArt(ok);
 				if(ok){
 					for(auto itr=articles.begin(); itr!=articles.end();++itr){
 						cout<<static_cast<int>(distance(articles.begin(),itr))<<" "<<*itr<<endl;
@@ -107,7 +107,7 @@ int main(){
 	const char* b="127.0.0.1";
 	Connection c(b,2);
 	client myClient(c);
-	cout<<"--NewsClient started--\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n read articleNbr :Read selected article"<<endl;
+	cout<<"--NewsClient started--\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n read articleNbr :Read selected article\n create NewsgroupName :creates a new Newsgroup\n "<<endl;
 	while(input!="exit"){
 		getline(cin,input);
 		istringstream i(input);
