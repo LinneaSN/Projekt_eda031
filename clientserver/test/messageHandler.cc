@@ -170,9 +170,9 @@ void messageHandler::serverGetArt(vector<Newsgroup> &NG){
     sendCode(Protocol::ANS_END);
 }
 
-//check difference between byte and code !!!!!!!!!!!!!!!!!!!!!
 
-//Client
+
+//ClientWrite
 void messageHandler::clientListNG(){
 	sendCode(Protocol::COM_LIST_NG);
 	sendCode(Protocol::COM_END);
@@ -218,6 +218,176 @@ void messageHandler::clientGetArt(int newsgroup, int article) {
 	sendIntParameter(article);
 	sendCode(Protocol::COM_END);
 }
+
+
+//ClientRead
+
+vector<string> messageHandler::clientReadListNG(){
+    unsigned char ans = recvCode();
+    vector<string> result;
+    if(ans!=Protocol::ANS_LIST_NG){
+        cout<<"Error: Wrong answer recived from server"<<endl;
+        //Do something until ANS_END is read, throw something?
+        return result;
+    }
+    int nbr = recvIntParameter();
+    string name;
+    int id;
+    for(int i = 0;i<nbr;++i){
+        id = recvIntParameter();
+        name = recvStringParameter();
+        name.insert(0,". ");
+        result.push_back(name.insert(0, to_string(id)));
+    }
+    ans = recvCode();
+    if(ans!=Protocol::ANS_END){
+        cout<<"Error: Answer from server uses wrong format"<<endl;
+        //do something, throw something?
+    }
+    return result;
+}
+
+bool messageHandler::clientReadCreateNG(){
+    unsigned char ans = recvCode();
+    bool result;
+    if(ans!=Protocol::ANS_CREATE_NG){
+        //do something until ANS_END, throw something
+        return false;
+    }
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        ans=recvCode();
+        result=false;
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+bool messageHandler::clientReadDeleteNG(){
+    unsigned char ans = recvCode();
+    bool result;
+    if(ans!=Protocol::ANS_DELETE_NG){
+        //do something until ANS_END, throw something
+        return false;
+    }
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        ans=recvCode();
+        result=false;
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+vector<string> messageHandler::clientReadListArt(bool &ok){
+    unsigned char ans = recvCode();
+    vector<string> result;
+    if(ans!=Protocol::ANS_LIST_ART){
+        //do something until ANS_END, throw something?
+        return result;
+    }
+    ans = recvCode();
+    if(ans!=Protocol::ANS_ACK){
+        ok=false;
+        ans = recvCode();
+    } else {
+        ok = true;
+        int nbr = recvIntParameter();
+        string name;
+        int id;
+        for(int i = 0;i<nbr;++i){
+            id = recvIntParameter();
+            name = recvStringParameter();
+            name.insert(0,". ");
+            result.push_back(name.insert(0,to_string(id)));
+        }
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+bool messageHandler::clientReadCreateArt(){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_CREATE_ART){
+        //do something until ANS_END, throw something?
+        return false;
+    }
+    bool result;
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        result = false;
+        ans = recvCode();
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+bool messageHandler::clientReadDeleteArt(string &error){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_DELETE_ART){
+        //do something until ANS_END, throw something?
+        return false;
+    }
+    bool result;
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result = true;
+    } else {
+        result = false;
+        ans= recvCode();
+        error = ans==Protocol::ERR_NG_DOES_NOT_EXIST ? "Error: Newsgroup does not exist." : "Error: Article does not exist.";
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+bool messageHandler::clientReadGetArt(string &title, string &author, string &text, string &error){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_GET_ART){
+        //do something until ANS_END, throw something?
+        return false;
+    }
+    bool result;
+    ans = recvCode();
+    if(ans == Protocol::ANS_ACK){
+        title = recvStringParameter();
+        author = recvStringParameter();
+        text = recvStringParameter();
+        result = true;
+    } else {
+        result = false;
+        ans = recvCode();
+        error = ans==Protocol::ERR_NG_DOES_NOT_EXIST ? "Error: Newsgroup does not exist." : "Error: Article does not exist.";
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        //do something, throw something?
+    }
+    return result;
+}
+
+
 
 // Low level protocol functions 
 void messageHandler::sendByte(unsigned char code) {

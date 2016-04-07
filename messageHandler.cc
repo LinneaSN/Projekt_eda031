@@ -5,7 +5,6 @@
 #include "./clientserver/connection.h"
 #include <iostream>
 #include <algorithm>
-#include <stdexcept>
 
 using namespace std;
 
@@ -132,7 +131,7 @@ void messageHandler::serverDeleteArt(vector<Newsgroup> &NG){
         try {
             it->deleteArticle(articleID);
             sendCode(Protocol::ANS_ACK);
-        } catch (string s) {
+        } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
             sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
         }
@@ -159,8 +158,7 @@ void messageHandler::serverGetArt(vector<Newsgroup> &NG){
             sendStringParameter(article.getTitle());
             sendStringParameter(article.getAuthor());
             sendStringParameter(article.getText());
-        } catch (string s) {
-            cout << s << endl;
+        } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
             sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
         }
@@ -225,7 +223,7 @@ vector<string> messageHandler::clientReadListNG(){
     unsigned char ans = recvCode();
     vector<string> result;
     if(ans!=Protocol::ANS_LIST_NG){
-        cerr<<"Error: Wrong answer recived from server"<<endl;
+        cout<<"Error: Wrong answer recived from server"<<endl;
         //Do something until ANS_END is read, throw something?
         return result;
     }
@@ -240,7 +238,7 @@ vector<string> messageHandler::clientReadListNG(){
     }
     ans = recvCode();
     if(ans!=Protocol::ANS_END){
-        cerr<<"Error: Answer from server uses wrong format"<<endl;
+        cout<<"Error: Answer from server uses wrong format"<<endl;
         //do something, throw something?
     }
     return result;

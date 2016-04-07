@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include "./clientserver/connection.h"
+#include "./clientserver/test/newsgroup.h"
+#include "./clientserver/test/article.h"
+#include "./clientserver/test/ERR_ART_DOES_NOT_EXIST.h"
 
 class messageHandler{
 	public:
