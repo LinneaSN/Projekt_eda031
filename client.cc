@@ -100,14 +100,21 @@ int main(){
 	//messageHandler MH=new messageHandler(Connection)
 	//Read and parse data
 	//istream i;
-	const set<string> correctCmds({"list","read","create","delete","exit"});
+	const set<string> correctCmds({"list","read","create","delete","exit","help"});
 	string input;
 	string sendstr;
-	istringstream i;
+	const string tooltip="\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n \n read articleNbr :Read selected article\n \n create newsgroup NewsgroupName :creates a new Newsgroup\n create article title author text :create an article in the lastly visited newsgroup\n \n delete newsgroup newgroupName :delete newsgroup\n delete article articleNbr :Delete article in lastly visited newsgroup\n\n exit :Exit program \n\n help :Display this tooltip again";
+	istringstream i;	
+	int port;
+	string temp;
+	cout<<"please enter port"<<endl;
+	cin>>port;
+	rewind(stdin);
+	cout<<" port: "<<port<<endl;
 	const char* b="127.0.0.1";
-	Connection c(b,2);
+	Connection c(b,port);
 	client myClient(c);
-	cout<<"--NewsClient started--\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n read articleNbr :Read selected article\n create NewsgroupName :creates a new Newsgroup\n "<<endl;
+	cout<<"--NewsClient started--"<<tooltip<<endl;
 	while(input!="exit"){
 		getline(cin,input);
 		istringstream i(input);
@@ -115,7 +122,11 @@ int main(){
 		i>>test;
 	//	cout<<input<<endl;
 		if(correctCmds.find(test)!=correctCmds.end()){
-			myClient.parseCmd(input);	
+			if(input=="help" || input=="Help"){
+				cout<<tooltip<<endl;
+			} else {
+				myClient.parseCmd(input);
+			}	
 		} else {
 			cout<<"Errornous input: "<<input<<endl;
 		}		
