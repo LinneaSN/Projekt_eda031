@@ -31,28 +31,50 @@ void client::parseCmd(string &input){
 				cout<<"Listing NewsGroups.."<<endl;
 				handler.clientListNG();
 				vector<string> NGs=handler.clientReadListNG();
+				if(NGs.empty()){
+					cout<<"No newsgroups avaiable"<<endl;
+				} else {	
 					for(auto itr=NGs.begin();itr!=NGs.end();++itr){
-						currentNewsGroup[*itr]=static_cast<int>(distance(NGs.begin(),itr));
+						
+						currentNewsGroup[(*itr).substr(3,(*itr).length())]=stoi((*itr).substr(0,1));
 						cout<<*itr<<endl;
+						//cout<<static_cast<int>(distance(NGs.begin(),itr))<<endl;
+						//cout<<currentNewsGroup[(*itr).substr(3,(*itr).length())]<<endl;
 					}
+				}
 			} else {
 				bool ok=1;
 				s>>NG; //get string for article
-				cout<<"Listing articles for NewsGroup: "<<NG<<endl;
-				handler.clientListArt(client::currentNewsGroup[NG]);
+				cout<<"Eval count operator: "<<currentNewsGroup.count(NG)<<endl;
+				if(!currentNewsGroup.count(NG)){
+					cout<<"Newsgroup: "<<NG<<" does not exist!"<<endl;
+					return;
+				}
+				handler.clientListArt(currentNewsGroup[NG]);
 				vector<string> articles=handler.clientReadListArt(ok);
-				if(ok){
+				if(ok && !articles.empty()){
+					cout<<"Listing articles for NewsGroup: "<<NG<<endl;
 					for(auto itr=articles.begin(); itr!=articles.end();++itr){
 						cout<<*itr<<endl;
 					}
+					return;
 				}
+				cout<<"No articles in newsgroup "<<NG<<endl;
+				return;
 			}
 		}else if(parse=="read"){
 			if(!NG.empty()){
 				s>>parse;
 				cout<<"Reading article: "<<parse<<" in newsgroup: "<<NG<<endl;
-				int article=static_cast<int>(parse[0]);
+				int article=stoi(parse);
 				handler.clientGetArt(currentNewsGroup[NG],article);
+				string title, author, text, error;
+				if(!handler.clientReadGetArt(title,author,text,error)){
+					cout<<"Error retriving article: "<<error<<endl;
+				} else {
+					cout<<title<<"  From: "<<author<<"\n"<<endl;
+					cout<<text<<endl;
+				}
 			}else{
 				client::printErrorMessage();
 			}
@@ -73,8 +95,9 @@ void client::parseCmd(string &input){
 					string title;
 					string author;
 					string text;
-					s>>title>>author>>text;
-					handler.clientCreateArt(currentNewsGroup[NG],title,author,text);
+					s>>title>>author;
+					getline(s,text);
+					handler.clientCreateArt(currentNewsGroup[NG],title,author,text.erase(0,1));
 					if(handler.clientReadCreateArt()){
 						cout<<"Creating Article: Title: "<<title<<" author: "<<author<<" text: "<<text<<endl;						
 					} else {
@@ -88,18 +111,30 @@ void client::parseCmd(string &input){
 			s>>parse;
 			if(parse=="Newsgroup" || parse=="newsgroup"){
 				s>>NG;
-				cout<<"deleting Newsgroup: "<<parse<<endl;
-				//clientDeleteNG(currentNewsGroup[NG]);
-				NG="";
+				cout<<"deleting Newsgroup: "<<NG<<"..."<<endl;
+				handler.clientDeleteNG(currentNewsGroup[NG]);
+				if(handler.clientReadDeleteNG()){
+					cout<<"Newsgroup: "<<NG<<" removed"<<endl;
+					NG="";
+				} else {
+					cout<<"Error: Delete unsuccessful!"<<endl;
+				}
 			} else if(parse=="Article" || parse=="article"){
 				if(!NG.empty()){
 					s>>parse;
-					int article=static_cast<int>(parse[0]);
-					//clientDeleteArt(currentNewsGroup[NG],article);
-					cout<<"Deleting Article: "<<article<<" in newsgroup: "<<NG<<endl;
+					string error;
+					int article=stoi(parse);
+					handler.clientDeleteArt(currentNewsGroup[NG],article);
+					if(handler.clientReadDeleteArt(error)){
+						cout<<"Deleting Article: "<<article<<" in newsgroup: "<<NG<<endl;
+					} else {
+						cout<<error<<endl;
+					}
 				} else {
 					client::printErrorMessage();	
 				}
+			} else {
+				cout<<"Errornous syntax: "<<input<<endl;
 			}
 		}
 	}
