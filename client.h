@@ -15,6 +15,12 @@ class client{
 		Connection& conn;
 		messageHandler handler;	
 		std::map<std::string,int> currentNewsGroup;
-		std::string NG;					
+		std::string NG;
+		bool clearflag=1;
+		void listCMD(std::string parse, bool flagArt);
+		//void updateMap();
+		void readCMD(std::istringstream& ss);
+		bool createCMD(std::istringstream& ss,std::string& parse);
+		//void deleteCMD(string parse);					
 };
 #endif
