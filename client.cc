@@ -10,7 +10,7 @@ using namespace std;
 client::client(Connection& c): conn(c), handler(c){}
 
 void client::printErrorMessage(){
-	cout<<"errornous command: no newsgroup selected! select a newgroup with 'list' command!"<<endl;
+	cout<<"Errornous command: no newsgroup selected! select a newgroup with 'list' command!"<<endl;
 }
 
 void client::listCMD(bool flagArt){
@@ -73,7 +73,7 @@ bool client::createCMD(istringstream &ss, string& parse){
 				cout<<"Creating Article in newsgroup:"<<NG<<" ::\n Title: "<<title<<" author: "<<author<<" text: "<<text<<endl;
 				return true;						
 			} else {
-				cout<<"error!"<<endl;
+				cout<<"Error!"<<endl;
 			}
 		} else {
 			printErrorMessage();
@@ -85,7 +85,7 @@ bool client::createCMD(istringstream &ss, string& parse){
 bool client::deleteCMD(istringstream& s, string& parse){
 	if(parse=="Newsgroup" || parse=="newsgroup"){
 		s>>NG;
-		cout<<"deleting Newsgroup: "<<NG<<"..."<<endl;
+		cout<<"Deleting Newsgroup: "<<NG<<"..."<<endl;
 		handler.clientDeleteNG(currentNewsGroup[NG]);
 		if(handler.clientReadDeleteNG()){
 			cout<<"Newsgroup: "<<NG<<" removed"<<endl;
