@@ -1,3 +1,11 @@
+#ignore all
+*
+
+#but not extensions
+!*.cc
+!*.h
+!Makefile
+
 # Compiled Object files
 *.slo
 *.lo

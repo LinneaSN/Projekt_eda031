@@ -5,7 +5,6 @@
 #include <iostream>
 #include <map>
 #include <set>
-//class messageHandler;
 
 class client{
 	public: 
@@ -16,6 +15,12 @@ class client{
 		Connection& conn;
 		messageHandler handler;	
 		std::map<std::string,int> currentNewsGroup;
-		std::string NG;					
+		std::string NG;
+		bool clearflag=1;
+		void listCMD(bool flagArt);
+		void updateMap(bool printFlag);
+		void readCMD(std::istringstream& ss);
+		bool createCMD(std::istringstream& ss,std::string& parse);
+		bool deleteCMD(std::istringstream& ss,std::string& parse);					
 };
 #endif
