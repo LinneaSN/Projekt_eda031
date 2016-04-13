@@ -5,6 +5,7 @@
 #include "./clientserver/connection.h"
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -227,9 +228,7 @@ vector<string> messageHandler::clientReadListNG(){
     unsigned char ans = recvCode();
     vector<string> result;
     if(ans!=Protocol::ANS_LIST_NG){
-        cout<<"Error: Wrong answer recived from server"<<endl;
-        //Do something until ANS_END is read, throw something?
-        return result;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     int nbr = recvIntParameter();
     string name;
@@ -242,8 +241,7 @@ vector<string> messageHandler::clientReadListNG(){
     }
     ans = recvCode();
     if(ans!=Protocol::ANS_END){
-        cout<<"Error: Answer from server uses wrong format"<<endl;
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -252,8 +250,7 @@ bool messageHandler::clientReadCreateNG(){
     unsigned char ans = recvCode();
     bool result;
     if(ans!=Protocol::ANS_CREATE_NG){
-        //do something until ANS_END, throw something
-        return false;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     ans = recvCode();
     if(ans==Protocol::ANS_ACK){
@@ -264,7 +261,7 @@ bool messageHandler::clientReadCreateNG(){
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -273,8 +270,7 @@ bool messageHandler::clientReadDeleteNG(){
     unsigned char ans = recvCode();
     bool result;
     if(ans!=Protocol::ANS_DELETE_NG){
-        //do something until ANS_END, throw something
-        return false;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     ans = recvCode();
     if(ans==Protocol::ANS_ACK){
@@ -285,7 +281,7 @@ bool messageHandler::clientReadDeleteNG(){
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -294,8 +290,7 @@ vector<string> messageHandler::clientReadListArt(bool &ok){
     unsigned char ans = recvCode();
     vector<string> result;
     if(ans!=Protocol::ANS_LIST_ART){
-        //do something until ANS_END, throw something?
-        return result;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     ans = recvCode();
     if(ans!=Protocol::ANS_ACK){
@@ -315,7 +310,7 @@ vector<string> messageHandler::clientReadListArt(bool &ok){
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -323,8 +318,7 @@ vector<string> messageHandler::clientReadListArt(bool &ok){
 bool messageHandler::clientReadCreateArt(){
     unsigned char ans = recvCode();
     if(ans!=Protocol::ANS_CREATE_ART){
-        //do something until ANS_END, throw something?
-        return false;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     bool result;
     ans = recvCode();
@@ -336,7 +330,7 @@ bool messageHandler::clientReadCreateArt(){
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -344,8 +338,7 @@ bool messageHandler::clientReadCreateArt(){
 bool messageHandler::clientReadDeleteArt(string &error){
     unsigned char ans = recvCode();
     if(ans!=Protocol::ANS_DELETE_ART){
-        //do something until ANS_END, throw something?
-        return false;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     bool result;
     ans = recvCode();
@@ -358,7 +351,7 @@ bool messageHandler::clientReadDeleteArt(string &error){
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
@@ -366,8 +359,7 @@ bool messageHandler::clientReadDeleteArt(string &error){
 bool messageHandler::clientReadGetArt(string &title, string &author, string &text, string &error){
     unsigned char ans = recvCode();
     if(ans!=Protocol::ANS_GET_ART){
-        //do something until ANS_END, throw something?
-        return false;
+        throw invalid_argument("Recieved an unexpected answer from server.");
     }
     bool result;
     ans = recvCode();
@@ -383,7 +375,7 @@ bool messageHandler::clientReadGetArt(string &title, string &author, string &tex
     }
     ans=recvCode();
     if(ans!=Protocol::ANS_END){
-        //do something, throw something?
+        throw invalid_argument("Protocol error from server.");
     }
     return result;
 }
