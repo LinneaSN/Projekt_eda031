@@ -173,14 +173,14 @@ int main(int argc, char* argv[]){
 	const set<string> correctCmds({"list","read","create","delete","exit","help"});
 	string input;
 	string sendstr;
-	const string tooltip="\nCmds:\n list :Lists newsgroups\n list NewsgroupName :List articles in selected newgroup\n \n read articleNbr :Read selected article\n \n create newsgroup NewsgroupName :creates a new Newsgroup\n create article title author text :create an article in the lastly visited newsgroup\n \n delete newsgroup newgroupName :delete newsgroup\n delete article articleNbr :Delete article in lastly visited newsgroup\n\n exit :Exit program \n\n help :Display this tooltip again";
+	const string tooltip="\nCmds:\n list :Lists newsgroups.\n list NewsgroupName :List articles in the selected newgroup.\n \n read articleNbr :Read the selected article.\n \n create newsgroup NewsgroupName :creates a new Newsgroup. NewsgroupName may not contain any spaces.\n create article title author text :create an article in the lastly visited newsgroup. Title and author may not contain any spaces.\n \n delete newsgroup newgroupName :delete newsgroup.\n delete article articleNbr :Delete article in lastly visited newsgroup.\n\n exit :Exit program. \n\n help :Display this tooltip again.";
 	istringstream i;	
 	int port=1024;
 	if(argc==2){
 		try{
 			port=stoi(argv[1]);
 		}catch(exception &e){
-			cout<<"Errornous port number, dumbass!"<<endl;
+			cout<<"Errornous port number"<<endl;
 			exit(1);
 		}
 	}
