@@ -7,6 +7,15 @@
 
 using namespace std;
 
+Newsgroup::Newsgroup(string str, int n){
+  nbr = n;
+  count = n+1;
+
+  name = str;
+  
+  created=time(NULL);
+}
+
 Newsgroup::Newsgroup(string str){
   nbr = count;
   ++count;

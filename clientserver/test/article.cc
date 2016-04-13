@@ -3,6 +3,14 @@
 
 using namespace std;
 
+Article::Article(string tit, string aut,string text, int n){
+  nbr = n;
+  count = n+1;
+  title = tit;
+  author = aut;
+  articleText = text;
+}
+
 Article::Article(string tit, string aut,string text){
   nbr = count;
   ++count;
@@ -10,6 +18,7 @@ Article::Article(string tit, string aut,string text){
   author = aut;
   articleText = text;
 }
+
 int Article::count=0;
 
 string Article::getAuthor(){

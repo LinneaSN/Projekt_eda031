@@ -6,6 +6,7 @@
 
 class Article{
  public:
+  Article(std::string tit, std::string aut, std::string text, int n);
   Article(std::string tit, std::string aut, std::string text);
 
   std::string getAuthor();

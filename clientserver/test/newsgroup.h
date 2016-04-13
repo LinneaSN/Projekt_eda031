@@ -8,6 +8,7 @@
 
 class Newsgroup{
  public:
+  Newsgroup(std::string str, int n);
   Newsgroup(std::string str);
   //~Newsgroup();
   std::string getName();
