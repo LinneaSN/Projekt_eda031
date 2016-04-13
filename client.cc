@@ -39,11 +39,11 @@ void client::readCMD(istringstream &ss){
 	string title, author, text, error;
 	int article;
 	ss>>article;
-	cout<<"Reading article: "<<article<<" in newsgroup: "<<NG<<endl;
 	handler.clientGetArt(currentNewsGroup[NG],article);
 	if(!handler.clientReadGetArt(title,author,text,error)){
 		cout<<"Error retriving article: "<<error<<endl;
 	} else {
+        cout<<"Reading article: "<<article<<" in newsgroup: "<<NG<<endl;
 		cout<<title<<"  From: "<<author<<"\n"<<endl;
 		cout<<text<<endl;
 	}

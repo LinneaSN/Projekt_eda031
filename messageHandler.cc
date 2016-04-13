@@ -165,7 +165,7 @@ void messageHandler::serverGetArt(vector<Newsgroup> &NG){
             sendStringParameter(article.getText());
         } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
-            sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+            sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
         }
 
     } else {
