@@ -59,7 +59,7 @@ bool client::createCMD(istringstream &ss, string& parse){
 			cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
 			return true;
 		} else {
-			cout<<"error!"<<endl;
+			cout<<"error! NewsgroupName must be unique"<<endl;
 		}				
 	}
 	if(parse=="Article" || parse=="article"){
@@ -72,7 +72,7 @@ bool client::createCMD(istringstream &ss, string& parse){
 				cout<<"Creating Article in newsgroup:"<<NG<<" ::\n Title: "<<title<<" author: "<<author<<" text: "<<text<<endl;
 				return true;						
 			} else {
-				cout<<"Error!"<<endl;
+				cout<<"Error! Could not find NewsgroupName!"<<endl;
 			}
 		} else {
 			printErrorMessage();
@@ -130,7 +130,7 @@ void client::updateMap(bool printFlag){
 		}
 	} else {	
 		for(auto itr=NGs.begin();itr!=NGs.end();++itr){
-			currentNewsGroup[(*itr).substr(3,(*itr).length())]=stoi((*itr).substr(0,1));	
+			currentNewsGroup[(*itr).substr((*itr).find(".")+2,(*itr).length())]=stoi((*itr).substr(0,(*itr).find(".")));	
 			if(printFlag){
 				cout<<*itr<<endl;
 			}
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]){
 					try{
 						myClient.parseCmd(input);
 					}catch(exception &e){
-						cout<<"Communication error with server!"<<endl;
+						cout<<"Communication error with server!: "<<e.what()<<endl;
 					}
 				}	
 			} else {
