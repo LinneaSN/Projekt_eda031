@@ -52,15 +52,18 @@ void client::readCMD(istringstream &ss){
 bool client::createCMD(istringstream &ss, string& parse){
 	if(parse=="Newsgroup"||parse=="newsgroup"){
 		ss>>NG;
-		cout<<"Creating Newsgroup: "<<NG<<endl;
-		handler.clientCreateNG(NG);
-		if(handler.clientReadCreateNG()){
-			updateMap(0);
-			cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
-			return true;
-		} else {
-			cout<<"error! NewsgroupName must be unique"<<endl;
-		}				
+        if(!currentNewsGroup.count(NG)){         
+            handler.clientCreateNG(NG);
+            if(handler.clientReadCreateNG()){
+                updateMap(0);
+                cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
+                return true;
+            } else {
+                cout<<"error! NewsgroupName must be unique"<<endl;
+            }
+        } else {
+             cout<<"error! NewsgroupName must be unique"<<endl;
+        }				
 	}
 	if(parse=="Article" || parse=="article"){
 		if(!NG.empty()){
@@ -84,16 +87,19 @@ bool client::createCMD(istringstream &ss, string& parse){
 bool client::deleteCMD(istringstream& s, string& parse){
 	if(parse=="Newsgroup" || parse=="newsgroup"){
 		s>>NG;
-		cout<<"Deleting Newsgroup: "<<NG<<"..."<<endl;
-		handler.clientDeleteNG(currentNewsGroup[NG]);
-		if(handler.clientReadDeleteNG()){
-			cout<<"Newsgroup: "<<NG<<" removed"<<endl;
-			auto it=currentNewsGroup.find(NG);
-			currentNewsGroup.erase(it);
-			NG="";
-		} else {
-			cout<<"Error: Newsgroup does not exist!"<<endl;
-		}
+        if(currentNewsGroup.count(NG)){
+		    handler.clientDeleteNG(currentNewsGroup[NG]);
+		    if(handler.clientReadDeleteNG()){
+			    cout<<"Newsgroup: "<<NG<<" removed"<<endl;
+			    auto it=currentNewsGroup.find(NG);
+			    currentNewsGroup.erase(it);
+			    NG="";
+		    } else {
+			    cout<<"Error: Newsgroup does not exist!"<<endl;
+		    }
+        } else {
+            cout<<"Error: Newsgroup does not exist!"<<endl;
+        }
 		return true;
 	} else if(parse=="Article" || parse=="article"){
 		if(!NG.empty()){
