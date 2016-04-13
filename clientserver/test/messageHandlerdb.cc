@@ -65,8 +65,8 @@ void MessageHandler::serverDeleteNG(Database &database) {
     auto it = remove_if(NG.begin(), NG.end(), 
             [id](Newsgroup& n){ return n.getNbr() == id;});
     if (it != NG.end()) {
+        database.deleteNewsgroup(id, it->getName());
         NG.erase(it);
-        database.deleteNewsgroup();
         removed = true;
     }
     
@@ -116,8 +116,9 @@ void MessageHandler::serverCreateArt(Database &database) {
 
     sendCode(Protocol::ANS_CREATE_ART);
     if(it != NG.end()){
-        it->addArticle(Article(title, author, text));
-        database.createArticle();
+        Article art(title, author, text);
+        it->addArticle(art);
+        database.createArticle(*it, art);
         sendCode(Protocol::ANS_ACK);
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -139,7 +140,7 @@ void MessageHandler::serverDeleteArt(Database &database){
     if (it != NG.end()) {
         try {
             it->deleteArticle(articleID);
-            database.deleteArticle();
+            database.deleteArticle(*it, articleID);
             sendCode(Protocol::ANS_ACK);
         } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);

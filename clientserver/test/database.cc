@@ -85,8 +85,42 @@ void Database::createNewsgroup(Newsgroup &n) {
     mkdir(dirName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); 
 }
 
-void Database::deleteNewsgroup() {}
+void Database::deleteNewsgroup(int id, string name) {
+    string dirName = "./database/" + to_string(id) + "-" + name;
 
-void Database::createArticle() {}
+    dirent* entry;
+    DIR* dir;
+    dir = opendir(dirName.c_str());
+    if (dir) {
+        while (true) {
+            entry = readdir(dir);
+            if (entry == NULL) break;
+            string s(entry->d_name);
+            if (s[0] != '.') {
+                string path(dirName + "/" + s);
+                remove(path.c_str());
+            }
+        }
 
-void Database::deleteArticle() {}
+        remove(dirName.c_str());
+        closedir(dir);
+    } else {
+        cerr << "error" << endl;
+    }
+}
+
+void Database::createArticle(Newsgroup &n, Article &a) {
+    string filename = "./database/" + to_string(n.getNbr()) + "-" + n.getName() + 
+        "/" + to_string(a.getNbr());
+    
+    ofstream file(filename);
+    file << a.getTitle() << endl;
+    file << a.getAuthor() << endl;
+    file << a.getText() << endl;    
+}
+
+void Database::deleteArticle(Newsgroup &n, int id) {
+    string filename = "./database/" + to_string(n.getNbr()) + "-" + n.getName() + "/" + 
+        to_string(id);
+    remove(filename.c_str());
+}
