@@ -55,7 +55,6 @@ bool client::createCMD(istringstream &ss, string& parse){
 		cout<<"Creating Newsgroup: "<<NG<<endl;
 		handler.clientCreateNG(NG);
 		if(handler.clientReadCreateNG()){
-			//currentNewsGroup[NG];
 			updateMap(0);
 			cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
 			return true;
@@ -190,19 +189,27 @@ int main(int argc, char* argv[]){
 	client myClient(c);
 	cout<<"--NewsClient started--"<<tooltip<<endl;
 	while(input!="exit"){
-		getline(cin,input);
-		istringstream i(input);
-		string test;
-		i>>test;
-	//	cout<<input<<endl;
-		if(correctCmds.find(test)!=correctCmds.end()){
-			if(input=="help" || input=="Help"){
-				cout<<tooltip<<endl;
+		if(c.isConnected()){
+			getline(cin,input);
+			istringstream i(input);
+			string test;
+			i>>test;
+			if(correctCmds.find(test)!=correctCmds.end()){
+				if(input=="help" || input=="Help"){
+					cout<<tooltip<<endl;
+				} else {
+					try{
+						myClient.parseCmd(input);
+					}catch(exception &e){
+						cout<<"Communication error with server!"<<endl;
+					}
+				}	
 			} else {
-				myClient.parseCmd(input);
-			}	
+				cout<<"Errornous input: "<<input<<endl;
+			}
 		} else {
-			cout<<"Errornous input: "<<input<<endl;
+			input="exit";
+			cout<<"Error: Not able to connect to server. Terminating client!"<<endl;
 		}		
 	}
 }
