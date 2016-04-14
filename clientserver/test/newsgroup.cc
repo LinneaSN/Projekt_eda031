@@ -8,18 +8,17 @@
 using namespace std;
 
 Newsgroup::Newsgroup(string str, int n){
-  nbr = n;
-  count = n+1;
-
-  name = str;
-  
-  created=time(NULL);
+  	nbr = n;
+	count = n+1;
+	name = str;
+   	created=time(NULL);
+	artCount = 1;
 }
 
 Newsgroup::Newsgroup(string str){
   nbr = count;
   ++count;
-
+artCount =1;
   name = str;
   
   created=time(NULL);
@@ -53,7 +52,14 @@ Article Newsgroup::getArticle(int i){
 }
 
 void Newsgroup::addArticle(Article art){
-  articles.push_back(art);
+	if(art.getNbr()==0){
+  		art.setNbr(artCount);
+		++artCount;
+	}else{
+		artCount=art.getNbr() + 1;
+	}
+	articles.push_back(art);
+
 }
 
 void Newsgroup::deleteArticle(int i){
@@ -72,4 +78,7 @@ vector<Article>& Newsgroup::listArticles(){
   return articles;
 }
 
+Article Newsgroup::getLast(){
 
+	return articles.back();
+}
