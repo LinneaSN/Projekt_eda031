@@ -20,7 +20,12 @@ Database::Database(bool useDB) : useDatabase(useDB) {
 
 void Database::loadDatabase() {
     vector<pair<int, string> > dirNames;
-    
+    getDirectoryNames(dirNames);
+    createNewsgroups(dirNames);
+
+}
+
+void Database::getDirectoryNames(vector<pair<int, string> > &dirNames) {
     dirent* newsgroupEntry;
     DIR* rootDir;
     rootDir = opendir(DB_PATH);
@@ -42,46 +47,49 @@ void Database::loadDatabase() {
     } else {
         cerr << "Could not open database directory." << endl;
     }
+}
 
-        for (auto &folderName : dirNames) {
-            Newsgroup ng(folderName.second, folderName.first);
- 
-            vector<int> articleIDs; 
-            dirent* articleEntry;
-            DIR* newsgroupDir;
-            string newsgroupPath(DB_PATH + to_string(folderName.first) + DELIMITER + folderName.second);
-            cout << newsgroupPath << endl;
-            newsgroupDir = opendir(newsgroupPath.c_str());
-            if (newsgroupDir) {
-                while (true) {
-                    articleEntry = readdir(newsgroupDir);
-                    if (articleEntry == NULL) break;
-                    string str(articleEntry->d_name);
-                    if (str[0] != '.') {
-                        articleIDs.push_back(stoi(str));
-                    }
+void Database::createNewsgroups(vector<pair<int, string> > &dirNames) {
+    for (auto &folderName : dirNames) {
+        Newsgroup ng(folderName.second, folderName.first);
+
+        vector<int> articleIDs; 
+        dirent* articleEntry;
+        DIR* newsgroupDir;
+        string newsgroupPath(DB_PATH + to_string(folderName.first) + DELIMITER + folderName.second);
+        cout << newsgroupPath << endl;
+        newsgroupDir = opendir(newsgroupPath.c_str());
+        if (newsgroupDir) {
+            while (true) {
+                articleEntry = readdir(newsgroupDir);
+                if (articleEntry == NULL) break;
+                string str(articleEntry->d_name);
+                if (str[0] != '.') {
+                    articleIDs.push_back(stoi(str));
                 }
-                sort(articleIDs.begin(), articleIDs.end());
-
-                for (auto &id : articleIDs) {
-                    ifstream s(newsgroupPath + "/" + to_string(id));
-                    string title, author, text;
-
-                    getline(s, title);
-                    getline(s, author);
-
-                    string line;
-                    while (getline(s, line)) {
-                        text += line + "\n";
-                    }
-                    ng.addArticle(Article(title, author, text, id));
-                }
-                newsgroups.push_back(ng);
-                closedir(newsgroupDir);
-            } else {
-                cerr << "Could not open newsgroup directory." << endl;
             }
+            sort(articleIDs.begin(), articleIDs.end());
+
+            for (auto &id : articleIDs) {
+                ifstream s(newsgroupPath + "/" + to_string(id));
+                string title, author, text;
+
+                getline(s, title);
+                getline(s, author);
+
+                string line;
+                while (getline(s, line)) {
+                    text += line + "\n";
+                }
+                ng.addArticle(Article(title, author, text, id));
+            }
+            newsgroups.push_back(ng);
+            closedir(newsgroupDir);
+        } else {
+            cerr << "Could not open newsgroup directory." << endl;
         }
+    }
+
 }
 
 void Database::createNewsgroup(Newsgroup &n) {
@@ -120,7 +128,7 @@ void Database::createArticle(Newsgroup &n, Article &a) {
     if (!useDatabase) return;
     string filename = DB_PATH + to_string(n.getNbr()) + DELIMITER + n.getName() + 
         "/" + to_string(a.getNbr());
-    
+
     ofstream file(filename);
     file << a.getTitle() << endl;
     file << a.getAuthor() << endl;

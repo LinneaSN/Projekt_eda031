@@ -23,6 +23,8 @@ class Database {
         bool useDatabase;
 
         void loadDatabase();
+        void getDirectoryNames(std::vector<std::pair<int, std::string> > &dirNames);
+        void createNewsgroups(std::vector<std::pair<int, std::string> > &dirNames);
 };
 
 
