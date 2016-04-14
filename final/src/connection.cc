@@ -23,8 +23,8 @@
 //
 // ------------------------------------------------------------------
 
-#include "../headers/connection.h"
-#include "../headers/connectionclosedexception.h"
+#include "connection.h"
+#include "connectionclosedexception.h"
 
 #include <iostream>
 #include <cstdlib>      /* exit() */

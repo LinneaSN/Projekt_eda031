@@ -13,8 +13,11 @@ CPPFLAGS =  -std=c++11
 CPPFLAGS += -I./headers
 
 CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast 
+CXXFLAGS += -Wmissing-braces -Wparentheses 
 CXXFLAGS += -std=c++11 
 CXXFLAGS += -g
+
+LDFLAGS   = -g -L./lib
 
 VPATH = src/
 BUILDDIR = src/
@@ -24,14 +27,23 @@ BUILDDIR = src/
 #CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
 
-all: libclientserver.a
+# Libraries
+LDLIBS = -lclientserver
+
+# Targets
+PROGS = projserverdb
+
+
+all: libclientserver.a $(PROGS)
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
 
-libclientserver.a: connection.o server.o 
-	ar rv libclientserver.a  connection.o server.o
-	ranlib libclientserver.a
+libclientserver.a: ./src/connection.o ./src/server.o 
+	ar rv lib/libclientserver.a  src/connection.o src/server.o
+	ranlib lib/libclientserver.a
+
+projserverdb: ./src/projserverdb.o ./src/messageHandlerdb.o ./src/database.o ./src/newsgroup.o ./src/article.o
 
 # Phony targets
 .PHONY: all clean
@@ -39,6 +51,7 @@ libclientserver.a: connection.o server.o
 # Standard clean
 clean:
 	rm -f *.o libclientserver.a
+	rm -f *.o $(PROGS)
 
 # Generate dependencies in *.d files
 
