@@ -17,12 +17,28 @@
 
 using namespace std;
 
+void usageInfo(char* filename) {
+	cerr << "Usage: " << filename << " port-number database" << endl;
+    cerr << "   or: " << filename << " port-number no-database" << endl;
+}
 
-int main(int argc, char* argv[]){
-	if (argc != 2) {
-		cerr << "Usage: myserver port-number" << endl;
-		exit(1);
+int main(int argc, char* argv[]) {
+	if (argc != 3) {
+		usageInfo(argv[0]);
+        exit(1);
 	}
+
+    bool useDatabase = false;
+    string arg(argv[2]);
+    cout << arg << endl;
+    if (arg.compare("database") == 0) {
+        useDatabase = true;
+    } else if (arg.compare("no-database") == 0) {
+        useDatabase = false;
+    } else {
+        usageInfo(argv[0]);
+        exit(1);
+    }
 	
 	int port = -1;
 	try {
@@ -38,7 +54,7 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
-    Database database;
+    Database database(useDatabase);
 	
 	while (true) {
 		auto conn = server.waitForActivity();

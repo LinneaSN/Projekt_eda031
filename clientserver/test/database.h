@@ -11,13 +11,18 @@ class Database {
     friend class MessageHandler;
 
     public:
-        Database();
+        Database(bool useDatabase);
         void createNewsgroup(Newsgroup &n);
         void deleteNewsgroup(int id, std::string name);
         void createArticle(Newsgroup &n, Article &a);
         void deleteArticle(Newsgroup &n, int id);
     private:
         std::vector<Newsgroup> newsgroups;
+        const char* DB_PATH = "./database/";
+        const char* DELIMITER = "-";
+        bool useDatabase;
+
+        void loadDatabase();
 };
 
 

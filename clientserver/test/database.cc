@@ -6,57 +6,66 @@
 #include <vector>
 #include <algorithm>
 
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
 using namespace std;
 
-Database::Database() {
+Database::Database(bool useDB) : useDatabase(useDB) {
+    if (useDatabase) {
+        loadDatabase();
+    }
+}
+
+void Database::loadDatabase() {
     vector<pair<int, string> > dirNames;
-    dirent* de;
-    DIR* dp;
-    dp = opendir("./database");
-    if (dp) {
+    
+    dirent* newsgroupEntry;
+    DIR* rootDir;
+    rootDir = opendir(DB_PATH);
+    if (rootDir) {
         while (true) {
-            de = readdir(dp);
-            if (de == NULL) break;
-            string s(de->d_name);
+            newsgroupEntry = readdir(rootDir);
+            if (newsgroupEntry == NULL) break;
+            string s(newsgroupEntry->d_name);
             if (s[0] != '.') {
-                size_t pos = s.find('-');
+                // Ignore current and parent directory
+                size_t pos = s.find(DELIMITER);
                 int id = stoi(s.substr(0, pos));
                 string name = s.substr(pos+1, s.size());
                 dirNames.push_back(make_pair(id, name));
             }
         }
         sort(dirNames.begin(), dirNames.end());
-        
-        for (auto &s : dirNames) {
-            Newsgroup ng(s.second, s.first);
+        closedir(rootDir);
+    } else {
+        cerr << "Could not open database directory." << endl;
+    }
+
+        for (auto &folderName : dirNames) {
+            Newsgroup ng(folderName.second, folderName.first);
  
-            vector<int> artNames; 
-            dirent* entry;
-            DIR* dir;
-            string article("./database/" + to_string(s.first) + "-" + s.second);
-            cout << article << endl;
-            dir = opendir(article.c_str());
-            if (dir) {
+            vector<int> articleIDs; 
+            dirent* articleEntry;
+            DIR* newsgroupDir;
+            string newsgroupPath(DB_PATH + to_string(folderName.first) + DELIMITER + folderName.second);
+            cout << newsgroupPath << endl;
+            newsgroupDir = opendir(newsgroupPath.c_str());
+            if (newsgroupDir) {
                 while (true) {
-                    entry = readdir(dir);
-                    if (entry == NULL) break;
-                    string str(entry->d_name);
+                    articleEntry = readdir(newsgroupDir);
+                    if (articleEntry == NULL) break;
+                    string str(articleEntry->d_name);
                     if (str[0] != '.') {
-                        artNames.push_back(stoi(str));
+                        articleIDs.push_back(stoi(str));
                     }
                 }
-                sort(artNames.begin(), artNames.end());
+                sort(articleIDs.begin(), articleIDs.end());
 
-                for (auto &art : artNames) {
-                    ifstream s(article + "/" + to_string(art));
-                    string title;
-                    string author;
-                    string text;
+                for (auto &id : articleIDs) {
+                    ifstream s(newsgroupPath + "/" + to_string(id));
+                    string title, author, text;
 
                     getline(s, title);
                     getline(s, author);
@@ -65,28 +74,26 @@ Database::Database() {
                     while (getline(s, line)) {
                         text += line + "\n";
                     }
-                    ng.addArticle(Article(title, author, text, art));
+                    ng.addArticle(Article(title, author, text, id));
                 }
                 newsgroups.push_back(ng);
-                closedir(dir);
+                closedir(newsgroupDir);
             } else {
-                cerr << "error" << endl;
+                cerr << "Could not open newsgroup directory." << endl;
             }
         }
-        closedir(dp);
-    } else {
-        cerr << "error" << endl;
-    }
 }
 
 void Database::createNewsgroup(Newsgroup &n) {
-    string dirName = "./database/" + to_string(n.getNbr()) 
-        + "-" + n.getName();
+    if (!useDatabase) return;
+    string dirName = DB_PATH + to_string(n.getNbr()) 
+        + DELIMITER + n.getName();
     mkdir(dirName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); 
 }
 
 void Database::deleteNewsgroup(int id, string name) {
-    string dirName = "./database/" + to_string(id) + "-" + name;
+    if (!useDatabase) return;
+    string dirName = DB_PATH + to_string(id) + DELIMITER + name;
 
     dirent* entry;
     DIR* dir;
@@ -105,12 +112,13 @@ void Database::deleteNewsgroup(int id, string name) {
         remove(dirName.c_str());
         closedir(dir);
     } else {
-        cerr << "error" << endl;
+        cerr << "error3" << endl;
     }
 }
 
 void Database::createArticle(Newsgroup &n, Article &a) {
-    string filename = "./database/" + to_string(n.getNbr()) + "-" + n.getName() + 
+    if (!useDatabase) return;
+    string filename = DB_PATH + to_string(n.getNbr()) + DELIMITER + n.getName() + 
         "/" + to_string(a.getNbr());
     
     ofstream file(filename);
@@ -120,7 +128,8 @@ void Database::createArticle(Newsgroup &n, Article &a) {
 }
 
 void Database::deleteArticle(Newsgroup &n, int id) {
-    string filename = "./database/" + to_string(n.getNbr()) + "-" + n.getName() + "/" + 
+    if (!useDatabase) return;
+    string filename = DB_PATH + to_string(n.getNbr()) + DELIMITER + n.getName() + "/" + 
         to_string(id);
     remove(filename.c_str());
 }
