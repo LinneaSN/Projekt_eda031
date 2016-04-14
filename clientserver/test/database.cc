@@ -127,8 +127,8 @@ void Database::deleteNewsgroup(int id, string name) {
 void Database::createArticle(Newsgroup &n, Article &a) {
     if (!useDatabase) return;
     string filename = DB_PATH + to_string(n.getNbr()) + DELIMITER + n.getName() + 
-        "/" + to_string(a.getNbr());
-
+        "/" + to_string(n.getLast().getNbr());
+    
     ofstream file(filename);
     file << a.getTitle() << endl;
     file << a.getAuthor() << endl;

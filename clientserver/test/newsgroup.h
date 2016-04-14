@@ -18,12 +18,13 @@ class Newsgroup{
   Article getArticle(int i);
   void addArticle(Article art);
   void deleteArticle(int q);
-
+  Article getLast();
   //friend bool operator==(const Newsgroup&, const Newsgroup&);
 
 
  private:
   static int count;
+  int artCount;
   std::string name; //unique
   int nbr; //unique
   time_t created;

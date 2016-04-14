@@ -13,10 +13,11 @@ class Article{
   int getNbr();
   std::string getTitle();
   std::string getText();
+  void setNbr(int n);
   
 
  private:
-  static int count;
+  // static int count;
   std::string title; 
   int nbr; //unique
   std::string articleText;
