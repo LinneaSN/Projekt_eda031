@@ -1,6 +1,6 @@
-#include "../headers/connection.h"
-#include "../headers/client.h"
-#include "../headers/messageHandlerdb.h"
+#include "connection.h"
+#include "messageHandlerdb.h"
+#include "client.h"
 #include <iostream>
 #include <sstream>
 #include <map>

@@ -31,7 +31,7 @@ BUILDDIR = src/
 LDLIBS = -lclientserver
 
 # Targets
-PROGS = projserverdb
+PROGS = projserverdb client
 
 
 all: libclientserver.a $(PROGS)
@@ -44,6 +44,9 @@ libclientserver.a: ./src/connection.o ./src/server.o
 	ranlib lib/libclientserver.a
 
 projserverdb: ./src/projserverdb.o ./src/messageHandlerdb.o ./src/database.o ./src/newsgroup.o ./src/article.o
+
+client: ./src/client.o ./src/messageHandlerdb.o ./src/database.o ./src/newsgroup.o ./src/article.o
+
 
 # Phony targets
 .PHONY: all clean
@@ -65,3 +68,7 @@ clean:
 # Include the *.d files
 SRC = $(wildcard *.cc)
 include $(SRC:.cc=.d)
+
+all: $(PROGS)
+	mv projserverdb bin/
+	mv client bin/

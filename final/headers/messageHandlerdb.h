@@ -29,6 +29,15 @@ class MessageHandler{
 		void clientCreateArt(int newsgroup, std::string &title, std::string &author, std::string &text);
 		void clientDeleteArt(int newsgroup, int article);
 		void clientGetArt(int newsgroup, int article);
+
+	std::vector<std::string> clientReadListNG();
+        bool clientReadCreateNG();
+        bool clientReadDeleteNG();
+        std::vector<std::string> clientReadListArt(bool &ok);
+        bool clientReadCreateArt();
+        bool clientReadDeleteArt(std::string &error);
+        bool clientReadGetArt(std::string &title, std::string &author, std::string &text, std::string &error);
+
 	private:
 		Connection& conn;
 

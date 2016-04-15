@@ -5,6 +5,7 @@
 #include "connection.h"
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -95,7 +96,12 @@ void MessageHandler::serverListArt(Database &database) {
         sendIntParameter(articles.size());
         for (auto &a : articles) {
             sendIntParameter(a.getNbr());
-            sendStringParameter(a.getTitle());
+            //sendStringParameter(a.getTitle());
+	     string reply = a.getAuthor();//a.getTitle();
+	    reply.append("From:");
+	    reply.append(a.getAuthor());
+            sendStringParameter(reply);
+
         }
     } else {
         sendCode(Protocol::ANS_NAK);
@@ -172,7 +178,7 @@ void MessageHandler::serverGetArt(Database &database){
             sendStringParameter(article.getText());
         } catch (ERR_ART_DOES_NOT_EXIST &e) {
             sendCode(Protocol::ANS_NAK);
-            sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+            sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
         }
 
     } else {
@@ -231,6 +237,163 @@ void MessageHandler::clientGetArt(int newsgroup, int article) {
 	sendCode(Protocol::COM_END);
 }
 
+//ClientRead
+
+vector<string> MessageHandler::clientReadListNG(){
+    unsigned char ans = recvCode();
+    vector<string> result;
+    if(ans!=Protocol::ANS_LIST_NG){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    int nbr = recvIntParameter();
+    string name;
+    int id;
+    for(int i = 0;i<nbr;++i){
+        id = recvIntParameter();
+        name = recvStringParameter();
+        name.insert(0,". ");
+        result.push_back(name.insert(0, to_string(id)));
+    }
+    ans = recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+bool MessageHandler::clientReadCreateNG(){
+    unsigned char ans = recvCode();
+    bool result;
+    if(ans!=Protocol::ANS_CREATE_NG){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        ans=recvCode();
+        result=false;
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+bool MessageHandler::clientReadDeleteNG(){
+    unsigned char ans = recvCode();
+    bool result;
+    if(ans!=Protocol::ANS_DELETE_NG){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        ans=recvCode();
+        result=false;
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+vector<string> MessageHandler::clientReadListArt(bool &ok){
+    unsigned char ans = recvCode();
+    vector<string> result;
+    if(ans!=Protocol::ANS_LIST_ART){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    ans = recvCode();
+    if(ans!=Protocol::ANS_ACK){
+        ok=false;
+        ans = recvCode();
+    } else {
+        ok = true;
+        int nbr = recvIntParameter();
+        string name;//, author;
+        int id;
+        for(int i = 0;i<nbr;++i){
+            id = recvIntParameter();
+            name = recvStringParameter();
+            name.insert(0,". ");
+            result.push_back(name.insert(0,to_string(id)));
+        }
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+bool MessageHandler::clientReadCreateArt(){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_CREATE_ART){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    bool result;
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result=true;
+    } else {
+        result = false;
+        ans = recvCode();
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+bool MessageHandler::clientReadDeleteArt(string &error){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_DELETE_ART){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    bool result;
+    ans = recvCode();
+    if(ans==Protocol::ANS_ACK){
+        result = true;
+    } else {
+        result = false;
+        ans= recvCode();
+        error = ans==Protocol::ERR_NG_DOES_NOT_EXIST ? "Error: Newsgroup does not exist." : "Error: Article does not exist.";
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
+
+bool MessageHandler::clientReadGetArt(string &title, string &author, string &text, string &error){
+    unsigned char ans = recvCode();
+    if(ans!=Protocol::ANS_GET_ART){
+        throw invalid_argument("Recieved an unexpected answer from server.");
+    }
+    bool result;
+    ans = recvCode();
+    if(ans == Protocol::ANS_ACK){
+        title = recvStringParameter();
+        author = recvStringParameter();
+        text = recvStringParameter();
+        result = true;
+    } else {
+        result = false;
+        ans = recvCode();
+        error = ans==Protocol::ERR_NG_DOES_NOT_EXIST ? "Error: Newsgroup does not exist." : "Error: Article does not exist.";
+    }
+    ans=recvCode();
+    if(ans!=Protocol::ANS_END){
+        throw invalid_argument("Protocol error from server.");
+    }
+    return result;
+}
 // Low level protocol functions 
 void MessageHandler::sendByte(unsigned char code) {
     conn.write(code);

@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
-#include "./messageHandler.h"
-#include "./clientserver/connection.h"
+#include "messageHandlerdb.h"
+#include "connection.h"
 #include <iostream>
 #include <map>
 #include <set>
@@ -13,7 +13,7 @@ class client{
 		void printErrorMessage();
 	private:
 		Connection& conn;
-		messageHandler handler;	
+		MessageHandler handler;	
 		std::map<std::string,int> currentNewsGroup;
 		std::string NG;
 		bool clearflag=1;
