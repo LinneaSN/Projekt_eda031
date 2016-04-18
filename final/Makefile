@@ -40,15 +40,23 @@ all: libclientserver.a $(PROGS)
 # Doesn't seem to do any damage on other systems.
 
 libclientserver.a: ./src/connection.o ./src/server.o 
-	ar rv lib/libclientserver.a  src/connection.o src/server.o
-	ranlib lib/libclientserver.a
+	ar crv libclientserver.a  src/connection.o src/server.o
+	ranlib libclientserver.a
+	mv libclientserver.a ./lib
+
+
 
 projserverdb: ./src/projserverdb.o ./src/messageHandlerdb.o ./src/database.o ./src/newsgroup.o ./src/article.o
-
+#	mv projserverdb ./bin
 client: ./src/client.o ./src/messageHandlerdb.o ./src/database.o ./src/newsgroup.o ./src/article.o
-
+#	mv client ./bin
 
 # Phony targets
+install: projserverdb client
+	install projserverdb ./bin
+	install client ./bin
+
+.PHONY: install
 .PHONY: all clean
 
 # Standard clean
@@ -69,6 +77,6 @@ clean:
 SRC = $(wildcard *.cc)
 include $(SRC:.cc=.d)
 
-all: $(PROGS)
-	mv projserverdb bin/
-	mv client bin/
+#all: $(PROGS)
+#	mv projserverdb bin/
+#	mv client bin/
