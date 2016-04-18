@@ -22,7 +22,6 @@ void Database::loadDatabase() {
     vector<pair<int, string> > dirNames;
     getDirectoryNames(dirNames);
     createNewsgroups(dirNames);
-
 }
 
 void Database::getDirectoryNames(vector<pair<int, string> > &dirNames) {
@@ -57,7 +56,7 @@ void Database::createNewsgroups(vector<pair<int, string> > &dirNames) {
         dirent* articleEntry;
         DIR* newsgroupDir;
         string newsgroupPath(DB_PATH + to_string(folderName.first) + DELIMITER + folderName.second);
-        cout << newsgroupPath << endl;
+        //cout << newsgroupPath << endl;
         newsgroupDir = opendir(newsgroupPath.c_str());
         if (newsgroupDir) {
             while (true) {
