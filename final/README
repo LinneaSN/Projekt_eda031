@@ -1,0 +1,12 @@
+Running the server using the in-memory version:
+    ./projserverdb port-number no-database
+
+
+Running the server using the disk version:
+    ./projserverdb port-number database
+
+
+Running the client:
+    ./client host-name port-number 
+    
+    If the port-number is omitted, it is set to 1024.
