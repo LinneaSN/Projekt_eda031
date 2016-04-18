@@ -56,7 +56,6 @@ void Database::createNewsgroups(vector<pair<int, string> > &dirNames) {
         dirent* articleEntry;
         DIR* newsgroupDir;
         string newsgroupPath(DB_PATH + to_string(folderName.first) + DELIMITER + folderName.second);
-        //cout << newsgroupPath << endl;
         newsgroupDir = opendir(newsgroupPath.c_str());
         if (newsgroupDir) {
             while (true) {
