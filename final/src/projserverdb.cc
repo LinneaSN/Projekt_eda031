@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
 
     bool useDatabase = false;
     string arg(argv[2]);
-    cout << arg << endl;
     if (arg.compare("database") == 0) {
         useDatabase = true;
     } else if (arg.compare("no-database") == 0) {
