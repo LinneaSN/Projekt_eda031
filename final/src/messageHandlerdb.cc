@@ -96,10 +96,7 @@ void MessageHandler::serverListArt(Database &database) {
         sendIntParameter(articles.size());
         for (auto &a : articles) {
             sendIntParameter(a.getNbr());
-            //sendStringParameter(a.getTitle());
-	     string reply = a.getAuthor();//a.getTitle();
-	    reply.append("From:");
-	    reply.append(a.getAuthor());
+	    string reply = a.getTitle();
             sendStringParameter(reply);
 
         }
@@ -188,9 +185,7 @@ void MessageHandler::serverGetArt(Database &database){
     sendCode(Protocol::ANS_END);
 }
 
-//check difference between byte and code !!!!!!!!!!!!!!!!!!!!!
-
-//Client
+//Client write
 void MessageHandler::clientListNG(){
 	sendCode(Protocol::COM_LIST_NG);
 	sendCode(Protocol::COM_END);
@@ -314,7 +309,7 @@ vector<string> MessageHandler::clientReadListArt(bool &ok){
     } else {
         ok = true;
         int nbr = recvIntParameter();
-        string name;//, author;
+        string name;
         int id;
         for(int i = 0;i<nbr;++i){
             id = recvIntParameter();

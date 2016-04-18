@@ -15,6 +15,7 @@ void client::printErrorMessage(){
 
 void client::listCMD(bool flagArt){
 	updateMap(!flagArt);
+	NG.erase(0,1);
 	if(!flagArt){
 		return;
 	}
@@ -51,19 +52,20 @@ void client::readCMD(istringstream &ss){
 
 bool client::createCMD(istringstream &ss, string& parse){
 	if(parse=="Newsgroup"||parse=="newsgroup"){
-		ss>>NG;
-        if(!currentNewsGroup.count(NG)){         
-            handler.clientCreateNG(NG);
-            if(handler.clientReadCreateNG()){
-                updateMap(0);
-                cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
-                return true;
-            } else {
-                cout<<"error! NewsgroupName must be unique"<<endl;
-            }
-        } else {
-             cout<<"error! NewsgroupName must be unique"<<endl;
-        }				
+		getline(ss,NG);
+		NG.erase(0,1);
+		if(!currentNewsGroup.count(NG)){         
+		    handler.clientCreateNG(NG);
+		    if(handler.clientReadCreateNG()){
+			updateMap(0);
+			cout<<"NewsGroup: "<<NG<<" successfully created!"<<endl;
+			return true;
+		    } else {
+			cout<<"error! NewsgroupName must be unique"<<endl;
+		    }
+		} else {
+		     cout<<"error! NewsgroupName must be unique"<<endl;
+		}				
 	}
 	if(parse=="Article" || parse=="article"){
 		if(!NG.empty()){
@@ -86,7 +88,8 @@ bool client::createCMD(istringstream &ss, string& parse){
 
 bool client::deleteCMD(istringstream& s, string& parse){
 	if(parse=="Newsgroup" || parse=="newsgroup"){
-		s>>NG;
+		getline(s,NG);
+		NG.erase(0,1);
         if(currentNewsGroup.count(NG)){
 		    handler.clientDeleteNG(currentNewsGroup[NG]);
 		    if(handler.clientReadDeleteNG()){
@@ -149,7 +152,7 @@ void client::parseCmd(string &input){
 	string parse;
 	while(s>>parse){		
 		if(parse=="list"){
-			listCMD(s>>NG);
+			listCMD(getline(s,NG));
 		}else if(parse=="read"){
 			if(!NG.empty()){
 				readCMD(s);
